@@ -11,5 +11,10 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.UseSerialColumns();
+
+        modelBuilder.Entity<Node>()
+            .HasMany(node => node.Nodes)
+            .WithOne(node => node.ParentNode)
+            .HasForeignKey(node => node.ParentNodeId);
     }
 }
