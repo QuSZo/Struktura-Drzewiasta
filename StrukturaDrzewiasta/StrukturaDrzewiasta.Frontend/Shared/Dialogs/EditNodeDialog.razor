@@ -1,7 +1,7 @@
 ﻿
 <MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false">
     <MatDialogContent>
-        <p>Zmien nazwe folderu <b>@OldNode?.Name</b></p>
+        <p style="white-space: pre;">Zmien nazwe folderu <b>@OldNode?.Name</b></p>
         <MatTextField @bind-Value="@dialogNodeName"></MatTextField>
     </MatDialogContent>
     <MatDialogActions>

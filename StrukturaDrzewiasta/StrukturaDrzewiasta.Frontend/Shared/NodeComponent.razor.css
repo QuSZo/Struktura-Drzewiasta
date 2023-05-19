@@ -19,6 +19,7 @@
 .root__node-name{
     display: flex;
     gap: 5px;
+    white-space: pre;
 }
 
 .root__icons{
