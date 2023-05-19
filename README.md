@@ -35,6 +35,8 @@ Uruchomienie:
 	3.1 używając Visual Studio w polu "Package Manager Console" wpisać komendę "update-database"
 	3.2 używając JetBrains Rider w zakładce u góry ekranu o nazwie "Tools" wybrać kolejno: "Entity Framework Core" -> "Update Database" -> "OK"
 	4. skompilować projekt o nazwie "StrukturaDrzewiasta.App"
+	5. backend aplikacji znajduje się pod adresem "https://localhost:[numer portu]/swagger/index.html"
+	6. frontend aplikacji znajduje się pod adresem "https://localhost:[numer portu]"
 
 W razie problemów z uruchomieniem aplikacji proszę o kontakt.
 
