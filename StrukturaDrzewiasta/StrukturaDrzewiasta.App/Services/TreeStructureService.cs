@@ -29,6 +29,9 @@ public class TreeStructureService : ITreeStructureService
     
     public void CreateNode(CreateNodeDto createNodeDto)
     {
+        if(createNodeDto.Name == null)
+            throw new BadRequestException("The Name field is required");
+        
         var parentNode = _appDbContext.Node
             .Include(node => node.Nodes)
             .FirstOrDefault(node => node.Id == createNodeDto.ParentNodeId);
@@ -38,7 +41,7 @@ public class TreeStructureService : ITreeStructureService
 
         if (parentNode.Nodes.Any(node => node.Name == createNodeDto.Name))
             throw new BadRequestException("This name exist in this scope!");
-        
+
         var node = _autoMapper.Map<Node>(createNodeDto);
 
         _appDbContext.Node.Add(node);
@@ -47,6 +50,9 @@ public class TreeStructureService : ITreeStructureService
 
     public void EditNode(EditNodeDto editNodeDto)
     {
+        if(editNodeDto.Name == null)
+            throw new BadRequestException("The Name field is required");
+        
         var nodeToEdit = _appDbContext.Node.FirstOrDefault(node => node.Id == editNodeDto.Id);
         
         if (nodeToEdit == null || nodeToEdit.Id == 1)

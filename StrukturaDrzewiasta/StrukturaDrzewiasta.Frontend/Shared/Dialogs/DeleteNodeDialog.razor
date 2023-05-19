@@ -1,7 +1,7 @@
 ﻿
 <MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false">
     <MatDialogContent>
-        <p>Czy na pewno chcesz usunąć folder <b>@NodeToDelete?.Name</b>?</p>
+        <p style="white-space: pre;">Czy na pewno chcesz usunąć folder <b>@NodeToDelete?.Name</b>?</p>
     </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="@(e => { dialogIsOpen = false; })">Anuluj</MatButton>
