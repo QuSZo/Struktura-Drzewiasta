@@ -153,7 +153,7 @@ public class TreeStructureService : ITreeStructureService
             .Include(node => node.Nodes)
             .FirstOrDefault(node => node == nodeToEdit);
 
-        if (editedNode?.Nodes.Count == 0)
+        if (editedNode.Nodes.Count == 0)
         {
             return true;
         }
@@ -163,9 +163,9 @@ public class TreeStructureService : ITreeStructureService
             return false;
         }
 
-        foreach (var child in editedNode.Nodes)
+        foreach (var node in editedNode.Nodes)
         {
-            if (!CheckIfSubNode(child, parentNode))
+            if (!CheckIfSubNode(node, parentNode))
             {
                 return false;
             }
