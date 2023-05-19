@@ -1,0 +1,54 @@
+﻿<MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false" SurfaceStyle="min-width: 65vw !important; height: 50vh;">
+    <MatDialogContent >
+        <MatButton Raised="true" OnClick="@(() => GenerateRootNode())" Icon="@MatIconNames.File_copy" Label="Przenieś do folderu głównego" Style="margin-bottom: 20px;"></MatButton>
+        <div class="nodes">
+            @foreach (var node in Nodes)
+            {
+                <NodeComponent RootNode="node" DestinationNode="@true" NodeAction="OkClick"/>
+            }
+        </div>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@OnCancel">Anuluj</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+@code {
+    [Parameter]
+    public bool dialogIsOpen { get; set; } = false;
+    [Parameter]
+    public ReadNodeTreeDto NodeToMove { get; set; } = new ReadNodeTreeDto();
+    [Parameter]
+    public List<ReadNodeTreeDto> Nodes { get; set; } = new List<ReadNodeTreeDto>();
+    [Parameter]
+    public EventCallback<bool> dialogIsOpenChanged { get; set; }
+    [Parameter]
+    public EventCallback<MoveNodeDto> NodeToMoveCallback { get; set; }
+    
+    public MoveNodeDto NodeToMoveLocal { get; set; } = new MoveNodeDto();
+
+    public async void OkClick(NodeAction nodeDestination)
+    {
+        NodeToMoveLocal.Id = NodeToMove.Id;
+        NodeToMoveLocal.ParentNodeId = nodeDestination.Node.Id;
+        await NodeToMoveCallback.InvokeAsync(NodeToMoveLocal);
+        dialogIsOpen = false;
+        dialogIsOpenChanged.InvokeAsync(dialogIsOpen);
+    }
+
+    public void OnCancel()
+    {
+        dialogIsOpen = false;
+    }
+
+    public void GenerateRootNode()
+    {
+        var RootNodeAction = new NodeAction()
+        {
+            Node = new ReadNodeTreeDto(){Id = 1},
+            Action = NodeActionEnum.MoveDestination
+        };
+        OkClick(RootNodeAction);
+    }
+
+}

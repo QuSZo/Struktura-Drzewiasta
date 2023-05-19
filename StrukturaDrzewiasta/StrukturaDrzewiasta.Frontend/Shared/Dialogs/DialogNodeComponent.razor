@@ -1,0 +1,69 @@
+﻿<div class="root">
+    <div class="root__head" @onclick="() => ToogleVisible()">
+        <span class="root__node-name">
+            <MatIcon Icon="@SetIconFolder()"/>
+            <span style="color: var(--primary-color)">@RootNode.Name</span>
+        </span>
+        <div class="root__icons">
+            <div class="root__actions" @onclick:stopPropagation="true">
+                <MatIcon @onclick="() => SelectedNode(RootNode)" Icon="@MatIconNames.File_copy" Class="pointer"/>
+            </div>
+            <div class="root__drop-icon">
+                @if (RootNode.Nodes.Count != 0)
+                {
+                    <MatIcon Icon="@SetIconArrow()"></MatIcon>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="root__children">
+        @if (isNodesVisible)
+        {
+            @foreach (var node in RootNode.Nodes)
+            {
+                <DialogNodeComponent RootNode="@node" SelectedNodeCallback="@SelectedNodePropagation"/>
+            }
+        }
+    </div>
+</div>
+
+
+@code{
+    [Parameter]
+    public ReadNodeTreeDto RootNode { get; set; }
+    [Parameter]
+    public EventCallback<ReadNodeTreeDto> SelectedNodeCallback { get; set; }
+
+    public bool isNodesVisible { get; set; }
+
+
+    private string IsVisible()
+    {
+        return isNodesVisible && RootNode.Nodes.Count != 0 ? "root__children--visible" : "root__children--hidden";
+    }
+
+    private void ToogleVisible()
+    {
+        isNodesVisible = !isNodesVisible;
+    }
+
+    private string SetIconArrow()
+    {
+        return isNodesVisible ? @MatIconNames.Arrow_drop_down : @MatIconNames.Arrow_drop_up;
+    }
+
+    private string SetIconFolder()
+    {
+        return isNodesVisible && RootNode.Nodes.Count != 0 ? @MatIconNames.Folder_open : @MatIconNames.Folder;
+    }
+
+    private void SelectedNodePropagation(ReadNodeTreeDto selectedNode)
+    {
+        SelectedNodeCallback.InvokeAsync(selectedNode);
+    }
+    
+    private void SelectedNode(ReadNodeTreeDto selectedNode)
+    {
+        SelectedNodeCallback.InvokeAsync(selectedNode);
+    }
+}

@@ -1,0 +1,22 @@
+﻿@inherits LayoutComponentBase
+
+<MatThemeProvider Theme="@Theme">
+    <div class="page">
+        <main>
+            @Body
+        </main>
+        <footer>Powered by Mikołaj Kuszowski</footer>
+    </div>
+</MatThemeProvider>
+
+@code{
+    
+    public readonly MatTheme Theme = new MatTheme()
+    {
+        Primary = "var(--primary-color)",
+        Secondary = "var(--primary-color)",
+        Background = "var(--primary-color)",
+        Surface = "white",
+        OnSurface = "var(--primary-color)",
+    };
+}

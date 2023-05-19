@@ -1,0 +1,61 @@
+﻿.root{
+    display: flex;
+    flex-direction: column;
+    gap:5px;
+}
+
+.root__head{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--primary-color);
+    background-color: #c3d4f7;
+    width: 100%;
+    height: 48px;
+    padding: 5px 20px;
+    border-radius: 10px;
+}
+
+.root__node-name{
+    display: flex;
+    gap: 5px;
+}
+
+.root__icons{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+    gap: 15px;
+}
+
+.root__actions{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: 10px;
+    padding: 0 10px;
+    border-radius: 10px;
+    background-color: #6b7dff4d;
+    height: 80%;
+}
+
+.root__drop-icon{
+    display: flex;
+    width: 24px;
+}
+
+.root__children{
+    flex-direction: column;
+    gap: 5px;
+    padding-left: 20px;
+}
+
+.root__children--visible{
+    display: flex;
+}
+
+.root__children--hidden{
+    display: none;
+}

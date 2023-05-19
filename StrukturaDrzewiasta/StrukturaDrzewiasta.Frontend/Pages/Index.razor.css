@@ -1,0 +1,53 @@
+.control-panel{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 15%;
+    width: 100%;
+    padding-right: 30px;
+    padding-bottom: 20px;
+}
+
+.explorer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.elements{
+    transform: rotate(3deg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: -5px 5px 20px 0 #22222255;
+}
+
+.explorer__nodes{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+    height: 100%;
+    overflow-y: scroll;
+    padding-right: 20px;
+}
+
+.background{
+    background-color: var(--primary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 70%;
+    border-radius: 10px;
+    transform: rotate(-3deg);
+}

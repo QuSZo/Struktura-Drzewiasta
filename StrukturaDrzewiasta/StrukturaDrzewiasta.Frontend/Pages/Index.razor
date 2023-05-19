@@ -1,0 +1,152 @@
+﻿@page "/"
+@inject ITreeStructureService TreeStructureService
+
+<PageTitle>Struktura Drzewiasta</PageTitle>
+
+<div class="explorer">
+    <div class="background">
+        <div class="elements">
+            <div class="control-panel">
+                <div class="control-panel__left">
+                    <MatButton Raised="true" OnClick="@(() => CreateRootNode())" Icon="@MatIconNames.Create_new_folder" Label="Stwórz nowy folder"></MatButton>
+                    <MatButton Raised="true" OnClick="@(() => OpenNodes())" Icon="@MatIconNames.Unfold_more" Label="Rozwiń wszystkie"></MatButton>
+                </div>
+                <div class="control-panel__right">
+                    <MatButton Raised="true" Label="Sortuj" OnClick="@HandleSortCategory" RefBack="@buttonForwardRef"></MatButton>
+                    <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
+                        <MatList>
+                            <MatListItem OnClick="@(() => HandleSortCategoryChanged("name"))">Według nazwy</MatListItem>
+                            <MatListItem OnClick="@(() => HandleSortCategoryChanged("id"))">Według daty utworzenia</MatListItem>
+                        </MatList>
+                    </MatMenu>
+                </div>
+            </div>
+            <div class="explorer__nodes">
+                @foreach (var node in Nodes)
+                {
+                    <NodeComponent RootNode="node" NodeAction="@HandleNodeAction" OpenNodesSignal="@OpenNodesSignal"/>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<AddNodeDialog @bind-dialogIsOpen="@CreateNodeDialog" ParentNode="SelectedNode" NewNodeCallback="CreateNode"/>
+<EditNodeDialog @bind-dialogIsOpen="@EditNodeDialog" OldNode="SelectedNode" NewNodeCallback="EditNode"/>
+<DeleteNodeDialog @bind-dialogIsOpen="@DeleteNodeDialog" NodeToDelete="SelectedNode" IdNodeToDeleteCallback="DeleteNode"/>
+<MoveNodeDialog @bind-dialogIsOpen="@MoveNodeDialog" NodeToMove="SelectedNode" Nodes="Nodes" NodeToMoveCallback="MoveNode"/>
+
+@code{
+    List<ReadNodeTreeDto> Nodes { get; set; } = new List<ReadNodeTreeDto>();
+    public string SortCategory = "id";
+    
+    public bool CreateNodeDialog { get; set; } = false;
+    public bool EditNodeDialog { get; set; } = false;
+    public bool DeleteNodeDialog { get; set; } = false;
+    public bool MoveNodeDialog { get; set; } = false;
+
+    public ReadNodeTreeDto SelectedNode { get; set; }
+    
+    private bool OpenNodesSignal {
+        get
+        {
+            var openNodes = _openNodesSignal;
+            if (SignalTTL-- == 0)
+                _openNodesSignal = false;
+            return openNodes;
+        }
+        
+        set => _openNodesSignal = value;
+    }
+    private bool _openNodesSignal = false;
+    private int SignalTTL = 0;
+
+    private async Task GetNodes(string sortedBy)
+    {
+        Nodes = new List<ReadNodeTreeDto>();
+        Nodes = await TreeStructureService.GetNodeTree(sortedBy);
+        StateHasChanged();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetNodes(SortCategory);
+    }
+    
+    private ForwardRef buttonForwardRef = new ForwardRef();
+    private BaseMatMenu Menu;
+ 
+    public void HandleSortCategory(MouseEventArgs e)
+    {
+        this.Menu.OpenAsync();
+    }
+    
+    private void HandleNodeAction(NodeAction nodeAction)
+    {
+        switch (nodeAction.Action)
+        {
+            case NodeActionEnum.Create:
+                CreateNodeDialog = true;
+                break;
+            case NodeActionEnum.Edit:
+                EditNodeDialog = true;
+                break;
+            case NodeActionEnum.Delete:
+                DeleteNodeDialog = true;
+                break;
+            case NodeActionEnum.MoveSource:
+                MoveNodeDialog = true;
+                break;
+        }
+        SelectedNode = nodeAction.Node;
+    }
+
+    private void CreateRootNode()
+    {
+        HandleNodeAction(new NodeAction()
+        {
+            Action = NodeActionEnum.Create,
+            Node = new ReadNodeTreeDto()
+            {
+                Id = 1
+            }
+        });
+    }   
+    
+    private async void CreateNode(CreateNodeDto createNode)
+    {
+        await TreeStructureService.CreateNode(createNode);
+        await GetNodes(SortCategory);
+    }
+
+    private async void EditNode(EditNodeDto editNode)
+    {
+        await TreeStructureService.EditNode(editNode);
+        await GetNodes(SortCategory);
+    }
+    
+    private async void DeleteNode(int nodeId)
+    {
+        await TreeStructureService.DeleteNode(nodeId);
+        await GetNodes(SortCategory);
+    }
+
+    private async void MoveNode(MoveNodeDto moveNodeDto)
+    {
+        await TreeStructureService.MoveNode(moveNodeDto);
+        await GetNodes(SortCategory);
+    }
+
+    private void OpenNodes()
+    {
+        SignalTTL = Nodes.Count - 1;
+        OpenNodesSignal = true;
+    }
+
+    private void HandleSortCategoryChanged(string category)
+    {
+        SortCategory = category;
+        GetNodes(SortCategory);
+    }
+
+}

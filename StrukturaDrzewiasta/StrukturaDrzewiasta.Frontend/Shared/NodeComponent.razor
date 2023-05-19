@@ -1,0 +1,112 @@
+﻿<div class="root">
+    <div class="root__head" @onclick="() => ToogleVisible()">
+        <span class="root__node-name">
+            <MatIcon Icon="@SetIconFolder()"></MatIcon>
+            @RootNode.Name
+        </span>
+        <div class="root__icons">
+            <div class="root__actions" @onclick:stopPropagation="true">
+                @if (DestinationNode)
+                {
+                    <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.MoveDestination)" Icon="@MatIconNames.Flight_land" Class="pointer"/>
+                }
+                else
+                {
+                    <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Create)" Icon="@MatIconNames.Create_new_folder" Class="pointer"/>
+                    <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Edit)" Icon="@MatIconNames.Edit" Class="pointer"/>
+                    <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Delete)" Icon="@MatIconNames.Delete" Class="pointer"/>
+                    <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.MoveSource)" Icon="@MatIconNames.Flight_takeoff" Class="pointer"/>
+                }
+                
+            </div>
+            <div class="root__drop-icon @SetIconArrow()">
+                @if (RootNode.Nodes.Count != 0)
+                {
+                    <MatIcon Icon="@MatIconNames.Chevron_right"></MatIcon>
+                }
+            </div>
+        </div>
+    </div>
+    @if (IsNodesVisible && RootNode.Nodes.Count > 0)
+    {
+        <div class="root__children">
+            @foreach (var node in RootNode.Nodes)
+            {
+                <NodeComponent RootNode="@node" DestinationNode="@DestinationNode" NodeAction="@NodeActionPropagation" OpenNodesSignal="@OpenNodesSignal"/>
+            }
+        </div>
+    }
+</div>
+
+
+@code{
+
+    [Parameter]
+    public bool DestinationNode { get; set; } = false;
+    [Parameter]
+    public ReadNodeTreeDto RootNode { get; set; }
+    [Parameter]
+    public EventCallback<NodeAction> NodeAction { get; set; }
+    [Parameter]
+    public bool OpenNodesSignal {
+        get
+        {
+            var openNodes = _openNodesSignal;
+            if (_openNodesSignalTTL-- == 0)
+                _openNodesSignal = false;
+            return openNodes;
+        }
+        set
+        {
+            if (value)
+            {
+                IsNodesVisible = value;
+                OpenNodes();
+            }
+           
+        } }
+    
+    private bool _openNodesSignal = false;
+    private int _openNodesSignalTTL = 0;
+    
+    private void OpenNodes()
+    {
+        _openNodesSignalTTL = RootNode.Nodes.Count - 1;
+        _openNodesSignal = true;
+    }
+
+    public bool IsNodesVisible { get; set; } = false;
+
+    private void ToogleVisible()
+    {
+        IsNodesVisible = !IsNodesVisible;
+    }
+
+    private string SetIconArrow()
+    {
+        return  IsNodesVisible ? "root__drop-icon--rotate" : "";
+    }
+
+    private string SetIconFolder()
+    {
+        return IsChildrenVisible() ? MatIconNames.Folder_open : MatIconNames.Folder;
+    }
+
+    private bool IsChildrenVisible() => IsNodesVisible && RootNode.Nodes.Count != 0;
+
+    private void CreateNodeAction(NodeActionEnum action)
+    {
+        var nodeAction = new NodeAction()
+        {
+            Node = RootNode,
+            Action = action
+        };
+        
+        NodeAction.InvokeAsync(nodeAction);
+    }
+
+    private void NodeActionPropagation(NodeAction nodeAction)
+    {
+        NodeAction.InvokeAsync(nodeAction);
+    }
+}
