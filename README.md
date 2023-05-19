@@ -33,7 +33,10 @@ Uruchomienie:
 	1. uruchomić IDE zainstalowane na swoim komputerze
 	2. otworzyć solucję o nazwie "StrukturaDrzewiasta.sln"
 	3.1 używając Visual Studio w polu "Package Manager Console" wpisać komendę "update-database"
-	3.2 używając JetBrains Rider w zakładce u góry ekranu o nazwie "Tools" wybrać kolejno: "Entity Framework Core" -> "Update Database" -> "OK"
+	3.2 używając JetBrains Rider 
+		a) w zakładce u góry ekranu o nazwie "File" wybrać "Settings", następnie znaleźć zakładkę "Plugins", wpisać "Entity Framework Core UI" i ją pobrać
+		b) w zakładce na dole ekranu o nazwie "Terminal" wpisać komendę "dotnet tool install --global dotnet-ef"
+		c) w zakładce u góry ekranu o nazwie "Tools" wybrać kolejno: "Entity Framework Core" -> "Update Database" -> "OK"
 	4. skompilować projekt o nazwie "StrukturaDrzewiasta.App"
 	5. backend aplikacji znajduje się pod adresem "https://localhost:[numer portu]/swagger/index.html"
 	6. frontend aplikacji znajduje się pod adresem "https://localhost:[numer portu]"
