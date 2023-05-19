@@ -1,0 +1,41 @@
+﻿
+<MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false">
+    <MatDialogContent>
+        <p>Zmien nazwe folderu <b>@OldNode?.Name</b></p>
+        <MatTextField @bind-Value="@dialogNodeName"></MatTextField>
+    </MatDialogContent>
+    <MatDialogActions>
+        <MatButton OnClick="@OnCancel">Anuluj</MatButton>
+        <MatButton OnClick="@OkClick">Zatwierdź</MatButton>
+    </MatDialogActions>
+</MatDialog>
+
+@code {
+    [Parameter]
+    public bool dialogIsOpen { get; set; } = false;
+    [Parameter]
+    public ReadNodeTreeDto OldNode { get; set; } = new ReadNodeTreeDto();
+    [Parameter]
+    public EventCallback<bool> dialogIsOpenChanged { get; set; }
+    [Parameter]
+    public EventCallback<EditNodeDto> NewNodeCallback { get; set; }
+
+    string dialogNodeName { get; set; } = null;
+    public EditNodeDto NodeToEdit { get; set; } = new EditNodeDto();
+
+    async void OkClick()
+    {
+        NodeToEdit.Id = OldNode.Id;
+        NodeToEdit.Name = dialogNodeName;
+        await NewNodeCallback.InvokeAsync(NodeToEdit);
+        dialogIsOpen = false;
+        dialogNodeName = null;
+        dialogIsOpenChanged.InvokeAsync(dialogIsOpen);
+    }
+
+    public void OnCancel()
+    {
+        dialogIsOpen = false;
+        dialogNodeName = null;
+    }
+}

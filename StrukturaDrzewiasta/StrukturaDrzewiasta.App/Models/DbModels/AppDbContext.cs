@@ -15,6 +15,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Node>()
             .HasMany(node => node.Nodes)
             .WithOne(node => node.ParentNode)
-            .HasForeignKey(node => node.ParentNodeId);
+            .HasForeignKey(node => node.ParentNodeId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
