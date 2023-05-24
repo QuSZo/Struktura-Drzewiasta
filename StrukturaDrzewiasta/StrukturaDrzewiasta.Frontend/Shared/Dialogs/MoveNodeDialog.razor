@@ -1,10 +1,11 @@
-﻿<MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false" SurfaceStyle="min-width: 65vw !important; height: 50vh;">
+﻿@using StrukturaDrzewiasta.Shared.Enums
+<MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false" SurfaceStyle="min-width: 65vw !important; height: 50vh;">
     <MatDialogContent >
         <MatButton Raised="true" OnClick="@(() => GenerateRootNode())" Icon="@MatIconNames.File_copy" Label="Przenieś do folderu głównego" Style="margin-bottom: 20px;"></MatButton>
         <div class="nodes">
             @foreach (var node in Nodes)
             {
-                <NodeComponent RootNode="node" DestinationNode="@true" NodeAction="OkClick"/>
+                <NodeComponent RootNode="node" NodeDisplayState="@NodeDisplayStateEnum.Move" NodeAction="OkClick"/>
             }
         </div>
     </MatDialogContent>

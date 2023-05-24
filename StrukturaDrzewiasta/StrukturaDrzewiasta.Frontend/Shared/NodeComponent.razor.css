@@ -66,3 +66,8 @@
 .root__children--hidden{
     display: none;
 }
+
+.root__reorder{
+    display: flex;
+    flex-direction: column;
+}

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace StrukturaDrzewiasta.Shared;
+namespace StrukturaDrzewiasta.Shared.Dtos;
 
 public class CreateNodeDto
 {

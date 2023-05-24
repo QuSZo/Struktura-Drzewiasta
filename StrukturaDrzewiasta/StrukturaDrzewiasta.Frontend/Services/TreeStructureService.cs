@@ -2,7 +2,8 @@
 using System.Net.Http.Json;
 using System.Text.Json;
 using MatBlazor;
-using StrukturaDrzewiasta.Shared;
+using StrukturaDrzewiasta.Shared.Dtos;
+using StrukturaDrzewiasta.Shared.Enums;
 
 namespace StrukturaDrzewiasta.Frontend.Services;
 
@@ -11,7 +12,8 @@ public interface ITreeStructureService
     public Task CreateNode(CreateNodeDto createNodeDto);
     public Task EditNode(EditNodeDto editNodeDto);
     public Task MoveNode(MoveNodeDto moveNodeDto);
-    public Task<List<ReadNodeTreeDto>> GetNodeTree(string sortedBy);
+    public Task ReorderNodes(ReorderNodeDto reorderNodeDto);
+    public Task<List<ReadNodeTreeDto>> GetNodeTree(SortTypeEnum sortedBy);
     public Task DeleteNode(int nodeId);
 }
 
@@ -56,7 +58,18 @@ public class TreeStructureService : ITreeStructureService
         }
     }
 
-    public async Task<List<ReadNodeTreeDto>> GetNodeTree(string sortedBy)
+    public async Task ReorderNodes(ReorderNodeDto reorderNodeDto)
+    {
+        var response = await _httpClient.PostAsJsonAsync(
+            "https://localhost:7162/api/TreeStructure/reorderNodes", reorderNodeDto);
+        if(!response.IsSuccessStatusCode)
+        {
+            var message = await response.Content.ReadAsStringAsync();
+            _matToaster.Add(message, MatToastType.Danger, "Error");
+        }
+    }
+
+    public async Task<List<ReadNodeTreeDto>> GetNodeTree(SortTypeEnum sortedBy)
     {
         var response = await _httpClient.GetAsync($"https://localhost:7162/api/TreeStructure?sortedBy={sortedBy}");
         var content = await response.Content.ReadFromJsonAsync<List<ReadNodeTreeDto>>();

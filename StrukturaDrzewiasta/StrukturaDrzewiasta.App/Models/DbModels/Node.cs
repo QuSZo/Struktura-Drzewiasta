@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using StrukturaDrzewiasta.Shared.Enums;
 
 namespace StrukturaDrzewiasta.App.Models.DbModels;
 
@@ -7,21 +7,24 @@ public class Node
     public int Id { get; set; }
     public string Name { get; set; }
     public int? ParentNodeId { get; set; }
-    
+    public int CustomSortId { get; set; }
     public Node? ParentNode { get; set; }
     public List<Node> Nodes { get; set; } = new List<Node>();
 
-    public void RecursiveOrder(string sortedBy = "id")
+    public void RecursiveOrder(SortTypeEnum sortedBy = SortTypeEnum.CreatedDate)
     {
-        if (sortedBy == "name")
+        switch(sortedBy)
         {
-            Nodes = Nodes.OrderBy(node => node.Name).ToList();
-            Nodes.ToList().ForEach(node => node.RecursiveOrder(sortedBy));
+            case SortTypeEnum.Name:
+                Nodes = Nodes.OrderBy(node => node.Name).ToList();
+                break;
+            case SortTypeEnum.Custom:
+                Nodes = Nodes.OrderBy(node => node.CustomSortId).ToList();
+                break;
+            case SortTypeEnum.CreatedDate:
+                Nodes = Nodes.OrderBy(node => node.Id).ToList();
+                break;
         }
-        else
-        {
-            Nodes = Nodes.OrderBy(node => node.Id).ToList();
-            Nodes.ToList().ForEach(node => node.RecursiveOrder());
-        }
+        Nodes.ForEach(node => node.RecursiveOrder(sortedBy));
     }
 }

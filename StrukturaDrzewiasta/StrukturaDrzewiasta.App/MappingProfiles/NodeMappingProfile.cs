@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using StrukturaDrzewiasta.App.Models.DbModels;
-using StrukturaDrzewiasta.Shared;
+using StrukturaDrzewiasta.Shared.Dtos;
 
 namespace StrukturaDrzewiasta.App.MappingProfiles;
 

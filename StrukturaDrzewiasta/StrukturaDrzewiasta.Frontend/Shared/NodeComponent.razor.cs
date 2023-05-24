@@ -1,4 +1,4 @@
-﻿using StrukturaDrzewiasta.Shared;
+﻿using StrukturaDrzewiasta.Shared.Dtos;
 
 namespace StrukturaDrzewiasta.Frontend.Shared;
 
@@ -13,5 +13,7 @@ public enum NodeActionEnum {
     Edit,
     Delete,
     MoveSource,
-    MoveDestination
+    MoveDestination,
+    ReorderUp,
+    ReorderDown
 }

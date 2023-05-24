@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StrukturaDrzewiasta.App.Services;
-using StrukturaDrzewiasta.Shared;
+using StrukturaDrzewiasta.Shared.Dtos;
+using StrukturaDrzewiasta.Shared.Enums;
 
 namespace StrukturaDrzewiasta.App.Controllers;
 
@@ -36,8 +37,15 @@ public class TreeStructureController : Controller
         return Ok();
     }
     
+    [HttpPost("reorderNodes")]
+    public ActionResult ReorderingNodes([FromBody] ReorderNodeDto reorderNodeDto)
+    {
+        _treeStructureService.ReorderNodes(reorderNodeDto);
+        return Ok();
+    }
+    
     [HttpGet]
-    public ActionResult<IEnumerable<ReadNodeTreeDto>> GetNodeTree([FromQuery] string sortedBy)
+    public ActionResult<IEnumerable<ReadNodeTreeDto>> GetNodeTree([FromQuery] SortTypeEnum sortedBy)
     {
         var result = _treeStructureService.GetNodeTree(sortedBy);
         return Ok(result);

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using StrukturaDrzewiasta.Shared.Enums
 @inject ITreeStructureService TreeStructureService
 
 <PageTitle>Struktura Drzewiasta</PageTitle>
@@ -12,11 +13,12 @@
                     <MatButton Raised="true" OnClick="@(() => OpenNodes())" Icon="@MatIconNames.Unfold_more" Label="Rozwiń wszystkie"></MatButton>
                 </div>
                 <div class="control-panel__right">
-                    <MatButton Raised="true" Label="Sortuj" OnClick="@HandleSortCategory" RefBack="@buttonForwardRef"></MatButton>
+                    <MatButton Raised="true" Label="Sortowanie" OnClick="@HandleSortCategory" RefBack="@buttonForwardRef"></MatButton>
                     <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
                         <MatList>
-                            <MatListItem OnClick="@(() => HandleSortCategoryChanged("name"))">Według nazwy</MatListItem>
-                            <MatListItem OnClick="@(() => HandleSortCategoryChanged("id"))">Według daty utworzenia</MatListItem>
+                            <MatListItem OnClick="@(() => HandleSortCategoryChanged(SortTypeEnum.Name))">Według nazwy</MatListItem>
+                            <MatListItem OnClick="@(() => HandleSortCategoryChanged(SortTypeEnum.CreatedDate))">Według daty utworzenia</MatListItem>
+                            <MatListItem OnClick="@(() => HandleSortCategoryChanged(SortTypeEnum.Custom))">Własne</MatListItem>
                         </MatList>
                     </MatMenu>
                 </div>
@@ -24,7 +26,7 @@
             <div class="explorer__nodes">
                 @foreach (var node in Nodes)
                 {
-                    <NodeComponent RootNode="node" NodeAction="@HandleNodeAction" OpenNodesSignal="@OpenNodesSignal"/>
+                    <NodeComponent RootNode="node" NodeAction="@HandleNodeAction" OpenNodesSignal="@OpenNodesSignal" NodeDisplayState="@NodeDisplayState" SiblingsAmount="@Nodes.Count"/>
                 }
             </div>
         </div>
@@ -38,12 +40,13 @@
 
 @code{
     List<ReadNodeTreeDto> Nodes { get; set; } = new List<ReadNodeTreeDto>();
-    public string SortCategory = "id";
+    public SortTypeEnum SortCategory = SortTypeEnum.CreatedDate;
     
     public bool CreateNodeDialog { get; set; } = false;
     public bool EditNodeDialog { get; set; } = false;
     public bool DeleteNodeDialog { get; set; } = false;
     public bool MoveNodeDialog { get; set; } = false;
+    public NodeDisplayStateEnum NodeDisplayState { get; set; } = NodeDisplayStateEnum.Default;
 
     public ReadNodeTreeDto SelectedNode { get; set; }
     
@@ -61,7 +64,7 @@
     private bool _openNodesSignal = false;
     private int SignalTTL = 0;
 
-    private async Task GetNodes(string sortedBy)
+    private async Task GetNodes(SortTypeEnum sortedBy)
     {
         Nodes = new List<ReadNodeTreeDto>();
         Nodes = await TreeStructureService.GetNodeTree(sortedBy);
@@ -96,6 +99,20 @@
                 break;
             case NodeActionEnum.MoveSource:
                 MoveNodeDialog = true;
+                break;
+            case NodeActionEnum.ReorderUp:
+                ReorderNodes(new ReorderNodeDto()
+                {
+                    NodeId = nodeAction.Node.Id,
+                    OrderDirectionEnum = OrderDirectionEnum.Up
+                });
+                break;
+            case NodeActionEnum.ReorderDown:
+                ReorderNodes(new ReorderNodeDto()
+                {
+                    NodeId = nodeAction.Node.Id,
+                    OrderDirectionEnum = OrderDirectionEnum.Down
+                });
                 break;
         }
         SelectedNode = nodeAction.Node;
@@ -136,6 +153,12 @@
         await TreeStructureService.MoveNode(moveNodeDto);
         await GetNodes(SortCategory);
     }
+    
+    private async void ReorderNodes(ReorderNodeDto reorderNodeDto)
+    {
+        await TreeStructureService.ReorderNodes(reorderNodeDto);
+        await GetNodes(SortCategory);
+    }
 
     private void OpenNodes()
     {
@@ -143,10 +166,14 @@
         OpenNodesSignal = true;
     }
 
-    private void HandleSortCategoryChanged(string category)
+    private void HandleSortCategoryChanged(SortTypeEnum category)
     {
         SortCategory = category;
         GetNodes(SortCategory);
+        if (category == SortTypeEnum.Custom)
+            NodeDisplayState = NodeDisplayStateEnum.CustomSort;
+        else
+            NodeDisplayState = NodeDisplayStateEnum.Default;
     }
 
 }

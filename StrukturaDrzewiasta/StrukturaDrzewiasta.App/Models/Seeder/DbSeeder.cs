@@ -34,11 +34,26 @@ public class DbSeeder
             {
                 new Node()
                 {
-                    Name = "Dokumenty"
+                    Name = "Dokumenty",
+                    CustomSortId = 1
                 },
                 new Node()
                 {
-                    Name = "Obrazy"
+                    Name = "Obrazy",
+                    CustomSortId = 2,
+                    Nodes = new List<Node>()
+                    {
+                        new Node()
+                        {
+                            Name = "Wakacje nad morzem",
+                            CustomSortId = 3,
+                        },
+                        new Node()
+                        {
+                            Name = "Wakacje w górach",
+                            CustomSortId = 4,
+                        }
+                    }
                 }
             }
         };
