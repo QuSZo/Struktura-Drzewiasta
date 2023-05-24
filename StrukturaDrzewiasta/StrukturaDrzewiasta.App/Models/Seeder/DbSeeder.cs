@@ -46,12 +46,12 @@ public class DbSeeder
                         new Node()
                         {
                             Name = "Wakacje nad morzem",
-                            CustomSortId = 3,
+                            CustomSortId = 1,
                         },
                         new Node()
                         {
                             Name = "Wakacje w górach",
-                            CustomSortId = 4,
+                            CustomSortId = 2,
                         }
                     }
                 }
