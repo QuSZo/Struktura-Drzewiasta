@@ -13,7 +13,7 @@
                     <MatButton Raised="true" OnClick="@(() => OpenNodes())" Icon="@MatIconNames.Unfold_more" Label="Rozwiń wszystkie"></MatButton>
                 </div>
                 <div class="control-panel__right">
-                    <MatButton Raised="true" Label="Sortowanie" OnClick="@HandleSortCategory" RefBack="@buttonForwardRef"></MatButton>
+                    <MatButton Raised="true" Label=@("Sortowanie: " + SelectSortingName()) OnClick="@HandleSortCategory" RefBack="@buttonForwardRef"></MatButton>
                     <MatMenu @ref="Menu" TargetForwardRef="@buttonForwardRef">
                         <MatList>
                             <MatListItem OnClick="@(() => HandleSortCategoryChanged(SortTypeEnum.Name))">Według nazwy</MatListItem>
@@ -176,4 +176,12 @@
             NodeDisplayState = NodeDisplayStateEnum.Default;
     }
 
+    private string SelectSortingName()
+    {
+        if (SortCategory == SortTypeEnum.Name)
+            return "Według nazwy";
+        if (SortCategory == SortTypeEnum.CreatedDate)
+            return "Według daty utworzenia";
+        return "Własne";
+    }
 }
