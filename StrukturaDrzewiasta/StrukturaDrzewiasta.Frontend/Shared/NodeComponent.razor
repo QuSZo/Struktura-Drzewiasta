@@ -18,7 +18,12 @@
                     @if (NodeDisplayState == NodeDisplayStateEnum.CustomSort)
                     {
                         <div class="root__reorder" @onclick:stopPropagation="true">
-                            @if(RootNode.CustomSortId == SiblingsAmount)
+                            @if (RootNode.CustomSortId == SiblingsAmount && RootNode.CustomSortId == 1)
+                            {
+                                <MatIcon Icon="@MatIconNames.Expand_less" Style="color: #787878;"/>
+                                <MatIcon Icon="@MatIconNames.Expand_more" Style="color: #787878;"/>
+                            }
+                            else if (RootNode.CustomSortId == SiblingsAmount)
                             {
                                 <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.ReorderUp)" Icon="@MatIconNames.Expand_less" Class="pointer"/>
                                 <MatIcon Icon="@MatIconNames.Expand_more" Style="color: #787878;"/>
