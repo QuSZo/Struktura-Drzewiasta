@@ -138,27 +138,10 @@ public class TreeStructureService : ITreeStructureService
     public IEnumerable<ReadNodeTreeDto> GetNodeTree(SortTypeEnum sortedBy)
     {
         var rootNode = _appDbContext.Node.ToList().FirstOrDefault(node => node.ParentNodeId == null);
-        rootNode.RecursiveOrder(sortedBy);
-        var sortedRootChildren = rootNode.Nodes;
         
-        // var nodeTreeFromDb = _appDbContext.Node.ToList()
-        //     .Where(node => node.ParentNodeId == 1).ToList();
-        //
-        // switch(sortedBy)
-        // { 
-        //     case "name":
-        //         nodeTreeFromDb = nodeTreeFromDb
-        //             .OrderBy(node => node.Name)
-        //             .ToList();
-        //         break;
-        //     
-        //     default:
-        //         nodeTreeFromDb = nodeTreeFromDb
-        //                         .OrderBy(node => node.Id)
-        //                         .ToList();
-        //         break;
-        // }
-        // nodeTreeFromDb.ForEach(node => node.RecursiveOrder(sortedBy));
+        rootNode.RecursiveOrder(sortedBy);
+        
+        var sortedRootChildren = rootNode.Nodes;
 
         var nodeTree = _autoMapper.Map<List<ReadNodeTreeDto>>(sortedRootChildren);
         return nodeTree;
