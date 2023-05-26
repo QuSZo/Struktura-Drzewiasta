@@ -8,6 +8,12 @@ public class NodeAction
     public NodeActionEnum Action { get; set; }
 }
 
+public class ToClose
+{
+    public bool IsChildrenNodesClosed { get; set; }
+    public int SignalTTL { get; set; }
+}
+
 public enum NodeActionEnum {
     Create,
     Edit,

@@ -84,8 +84,12 @@ i.material-icons{
 
 .pointer{
     cursor: pointer;    
+    transition: transform 0.2s ease-out;
 }
 
+.pointer:hover{
+    transform: scale(1.25);
+}
     #blazor-error-ui .dismiss {
         cursor: pointer;
         position: absolute;

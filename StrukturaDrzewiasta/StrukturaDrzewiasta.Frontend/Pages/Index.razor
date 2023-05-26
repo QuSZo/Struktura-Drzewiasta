@@ -26,7 +26,7 @@
             <div class="explorer__nodes">
                 @foreach (var node in Nodes)
                 {
-                    <NodeComponent RootNode="node" NodeAction="@HandleNodeAction" OpenNodesSignal="@OpenNodesSignal" NodeDisplayState="@NodeDisplayState" SiblingsAmount="@Nodes.Count"/>
+                    <NodeComponent RootNode="node" NodeAction="@HandleNodeAction" OpenNodesSignal="@OpenNodesSignal" NodeDisplayState="@NodeDisplayState" SiblingsAmount="@Nodes.Count" CloseParentNodesCallback="@CloseNodes" IsChildrenNodesClosed="@IsChildrenNodesClosed"/>
                 }
             </div>
         </div>
@@ -183,5 +183,54 @@
         if (SortCategory == SortTypeEnum.CreatedDate)
             return "Według daty utworzenia";
         return "Własne";
+    }
+    
+    [Parameter]
+    public EventCallback<bool> CloseParentNodesCallback { get; set; }
+
+    private int closeIndex = 0;
+    [Parameter]
+    public ToClose IsChildrenNodesClosed
+    {
+        get
+        {
+            Console.WriteLine(_isChildrenNodesClosed.IsChildrenNodesClosed);
+            if (_isChildrenNodesClosed.SignalTTL == 0 && _isChildrenNodesClosed.IsChildrenNodesClosed)
+            {
+                closeIndex++;
+                if (closeIndex == Nodes.Count)
+                {
+                    _isChildrenNodesClosed.IsChildrenNodesClosed = false;
+                    _isChildrenNodesClosed.SignalTTL = 0;
+                    closeIndex = 0;
+                    StateHasChanged();
+                }
+                
+                return new ToClose()
+                {
+                    IsChildrenNodesClosed = true,
+                    SignalTTL = 1
+                };
+            }
+            return new ToClose()
+            {
+                IsChildrenNodesClosed = false,
+                SignalTTL = 0
+            };
+        }
+        set{}
+    }
+
+    private ToClose _isChildrenNodesClosed = new ToClose()
+    {
+        IsChildrenNodesClosed = false,
+        SignalTTL = 0
+    };
+    
+    public void CloseNodes(bool close)
+    {
+        _isChildrenNodesClosed.IsChildrenNodesClosed = true;
+        _isChildrenNodesClosed.SignalTTL = 0;
+        StateHasChanged();
     }
 }

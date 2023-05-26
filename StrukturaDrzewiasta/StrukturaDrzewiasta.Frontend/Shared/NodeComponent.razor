@@ -6,11 +6,11 @@
             {
                 <div class="root__reorder" @onclick:stopPropagation="true" >
                     <MatIcon
-                        @onclick="() => {if (!IsFirstNode()) CreateNodeAction(NodeActionEnum.ReorderUp);}"
+                        @onclick="() => {if (!IsFirstNode()) CreateNodeAction(NodeActionEnum.ReorderUp); CloseParentNodesCallback.InvokeAsync(true);}"
                         Icon="@MatIconNames.Expand_less"
                         Class=@(IsFirstNode() ? "disable-pointer" : "pointer")/>
                     <MatIcon
-                        @onclick="() => {if (!IsLastNode()) CreateNodeAction(NodeActionEnum.ReorderDown);}"
+                        @onclick="() => {if (!IsLastNode()) CreateNodeAction(NodeActionEnum.ReorderDown); CloseParentNodesCallback.InvokeAsync(true);}"
                         Icon="@MatIconNames.Expand_more"
                         Class=@(IsLastNode() ? "disable-pointer" : "pointer")/>
                 </div>
@@ -34,7 +34,7 @@
                     <div class="root__actions" @onclick:stopPropagation="true">
                         
                         <span tooltip="Dodaj folder">
-                            <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Create)" Icon="@MatIconNames.Create_new_folder" Class="pointer"/>
+                            <MatIcon @onclick="() => { CreateNodeAction(NodeActionEnum.Create);}" Icon="@MatIconNames.Create_new_folder" Class="pointer"/>
                         </span>
                         
                         <span tooltip="Zmień nazwę">
@@ -65,7 +65,7 @@
         <div class="root__children">
             @foreach (var node in RootNode.Nodes)
             {
-                <NodeComponent RootNode="@node" NodeDisplayState="@NodeDisplayState" NodeAction="@NodeActionPropagation" OpenNodesSignal="@OpenNodesSignal" SiblingsAmount="@RootNode.Nodes.Count"/>
+                <NodeComponent RootNode="@node" NodeDisplayState="@NodeDisplayState" NodeAction="@NodeActionPropagation" OpenNodesSignal="@OpenNodesSignal" SiblingsAmount="@RootNode.Nodes.Count" CloseParentNodesCallback="@CloseNodes" IsChildrenNodesClosed="@IsChildrenNodesClosed"/>
             }
         </div>
     }
@@ -73,7 +73,6 @@
 
 
 @code{
-
     [Parameter]
     public NodeDisplayStateEnum NodeDisplayState { get; set; } = NodeDisplayStateEnum.Default;
     [Parameter]
@@ -100,6 +99,56 @@
             }
            
         } }
+    [Parameter]
+    public EventCallback<bool> CloseParentNodesCallback { get; set; }
+
+    private int closeIndex = 0;
+    [Parameter]
+    public ToClose IsChildrenNodesClosed
+    {
+        get
+        {
+            if (_isChildrenNodesClosed.SignalTTL == 0 && _isChildrenNodesClosed.IsChildrenNodesClosed)
+            {
+                closeIndex++;
+                if (closeIndex == RootNode.Nodes.Count)
+                {
+                    _isChildrenNodesClosed.IsChildrenNodesClosed = false;
+                    _isChildrenNodesClosed.SignalTTL = 0;
+                    closeIndex = 0;
+                    StateHasChanged();
+                }
+                
+                return new ToClose()
+                {
+                    IsChildrenNodesClosed = true,
+                    SignalTTL = 1
+                };
+            }
+            return new ToClose()
+            {
+                IsChildrenNodesClosed = false,
+                SignalTTL = 0
+            };
+        }
+        set
+        {
+            if (value.SignalTTL == 1)
+            {
+                IsNodesVisible = false;
+                _isChildrenNodesClosed.IsChildrenNodesClosed = false;
+                _isChildrenNodesClosed.SignalTTL = 0;
+                StateHasChanged();
+            }
+        }
+    }
+
+    private ToClose _isChildrenNodesClosed = new ToClose()
+    {
+        IsChildrenNodesClosed = false,
+        SignalTTL = 0
+    };
+    
     
     private bool _openNodesSignal = false;
     private int _openNodesSignalTTL = 0;
@@ -147,5 +196,12 @@
     private void NodeActionPropagation(NodeAction nodeAction)
     {
         NodeAction.InvokeAsync(nodeAction);
+    }
+
+    public void CloseNodes(bool close)
+    {
+        _isChildrenNodesClosed.IsChildrenNodesClosed = true;
+        _isChildrenNodesClosed.SignalTTL = 0;
+        StateHasChanged();
     }
 }
