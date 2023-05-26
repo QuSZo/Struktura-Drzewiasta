@@ -18,6 +18,7 @@
 
 .root__node-name{
     display: flex;
+    align-items: center;
     gap: 5px;
     white-space: pre;
 }
@@ -70,4 +71,5 @@
 .root__reorder{
     display: flex;
     flex-direction: column;
+    padding-right: 10px;
 }

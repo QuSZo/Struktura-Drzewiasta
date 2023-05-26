@@ -2,7 +2,7 @@
 <MatDialog IsOpen="@dialogIsOpen" IsOpenChanged="(bool x)=>dialogIsOpenChanged.InvokeAsync(x)" CanBeClosed="false">
     <MatDialogContent>
         <p>Podaj nazwę folderu</p>
-        <MatTextField @bind-Value="@dialogNodeName"></MatTextField>
+        <MatTextField maxlength="15" @bind-Value="@dialogNodeName"></MatTextField>
     </MatDialogContent>
     <MatDialogActions>
         <MatButton OnClick="@OnCancel">Anuluj</MatButton>

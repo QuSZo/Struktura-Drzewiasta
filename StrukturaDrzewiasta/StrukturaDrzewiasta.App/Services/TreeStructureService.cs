@@ -84,6 +84,9 @@ public class TreeStructureService : ITreeStructureService
         if (destinationNode == null)
             throw new NotFoundException("Destination node doesn't exist!");
         
+        if (moveNode.ParentNodeId == destinationNode.Id)
+            throw new BadRequestException("The destination node is a parent of source node");
+            
         if (moveNode == destinationNode)
             throw new BadRequestException("The destination node is a source node");
         

@@ -2,6 +2,21 @@
 <div class="root">
     <div class="root__head" @onclick="() => ToogleVisible()">
         <span class="root__node-name">
+            @if (NodeDisplayState == NodeDisplayStateEnum.CustomSort)
+            {
+                <div class="root__reorder" @onclick:stopPropagation="true" >
+                        <MatIcon
+                            @onclick="() => {if (!IsFirstNode()) CreateNodeAction(NodeActionEnum.ReorderUp);}"
+                            Icon="@MatIconNames.Expand_less"
+                            Class="@(IsFirstNode() ? "" : "pointer")"
+                            Style="@(IsFirstNode() ? "color: #787878;" : "")"/>
+                        <MatIcon
+                            @onclick="() => {if (!IsLastNode()) CreateNodeAction(NodeActionEnum.ReorderDown);}"
+                            Icon="@MatIconNames.Expand_more"
+                            Class="@(IsLastNode() ? "" : "pointer")"
+                            Style="@(IsLastNode() ? "color: #787878;" : "")"/>
+                </div>
+            }
             <MatIcon Icon="@SetIconFolder()"></MatIcon>
             @RootNode.Name
         </span>
@@ -10,7 +25,10 @@
                 @if (NodeDisplayState == NodeDisplayStateEnum.Move)
                 {
                     <div class="root__actions" @onclick:stopPropagation="true">
-                        <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.MoveDestination)" Icon="@MatIconNames.Flight_land" Class="pointer"/>
+                        
+                        <span tooltip="Przenieś do">
+                            <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.MoveDestination)" Icon="@MatIconNames.Flight_land" Class="pointer"/>
+                        </span>
                     </div>
                 }
                 else
@@ -41,10 +59,23 @@
                         </div>
                     }
                     <div class="root__actions" @onclick:stopPropagation="true">
-                        <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Create)" Icon="@MatIconNames.Create_new_folder" Class="pointer"/>
-                        <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Edit)" Icon="@MatIconNames.Edit" Class="pointer"/>
-                        <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Delete)" Icon="@MatIconNames.Delete" Class="pointer"/>
-                        <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.MoveSource)" Icon="@MatIconNames.Flight_takeoff" Class="pointer"/>
+                        
+                        <span tooltip="Dodaj folder">
+                            <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Create)" Icon="@MatIconNames.Create_new_folder" Class="pointer"/>
+                        </span>
+                        
+                        <span tooltip="Zmień nazwę">
+                            <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Edit)" Icon="@MatIconNames.Edit" Class="pointer"/>
+                        </span>
+                            
+                            <span tooltip="Usuń">
+                            <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.Delete)" Icon="@MatIconNames.Delete" Class="pointer"/>
+                        </span>
+                            
+                        <span tooltip="Przenieś">
+                            <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.MoveSource)" Icon="@MatIconNames.Flight_takeoff" Class="pointer"/>
+                        </span>
+                            
                     </div>
                 }
                 
@@ -122,6 +153,9 @@
     {
         return IsChildrenVisible() ? MatIconNames.Folder_open : MatIconNames.Folder;
     }
+
+    private bool IsFirstNode() => RootNode.CustomSortId == 1;
+    private bool IsLastNode() => RootNode.CustomSortId == SiblingsAmount;
 
     private bool IsChildrenVisible() => IsNodesVisible && RootNode.Nodes.Count != 0;
 

@@ -102,4 +102,29 @@ i.material-icons{
     .blazor-error-boundary::after {
         content: "An error has occurred."
     }
-    
+
+
+[tooltip]:hover::after {
+    visibility: visible;
+}
+
+[tooltip]::after {
+    content: attr(tooltip);
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translate(-50%);
+    font-size: 10px;
+    padding: 3px;
+    color: #EEEEEE;
+    white-space: nowrap;
+    border-radius: 3px;
+    background-color: #787878;
+    z-index: 1;
+    visibility: hidden;
+}
+
+[tooltip] {
+    display: flex;
+    position: relative;
+}

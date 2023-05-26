@@ -1,5 +1,4 @@
 .page {
-    position: relative;
     display: flex;
     flex-direction: column;
     height: 100vh;
@@ -13,8 +12,6 @@ main {
 }
 
 footer{
-    position: absolute;
-    bottom: 0;
     width: 100%;
     padding: 20px;
     color: #c1c1c1;
@@ -22,5 +19,4 @@ footer{
     font-weight: 300;
     text-align: center;
     border-top: 1px solid #c1c1c1;
-
 }
