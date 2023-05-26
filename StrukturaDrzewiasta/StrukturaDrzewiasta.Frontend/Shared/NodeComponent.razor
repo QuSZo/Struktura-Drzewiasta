@@ -5,16 +5,14 @@
             @if (NodeDisplayState == NodeDisplayStateEnum.CustomSort)
             {
                 <div class="root__reorder" @onclick:stopPropagation="true" >
-                        <MatIcon
-                            @onclick="() => {if (!IsFirstNode()) CreateNodeAction(NodeActionEnum.ReorderUp);}"
-                            Icon="@MatIconNames.Expand_less"
-                            Class="@(IsFirstNode() ? "" : "pointer")"
-                            Style="@(IsFirstNode() ? "color: #787878;" : "")"/>
-                        <MatIcon
-                            @onclick="() => {if (!IsLastNode()) CreateNodeAction(NodeActionEnum.ReorderDown);}"
-                            Icon="@MatIconNames.Expand_more"
-                            Class="@(IsLastNode() ? "" : "pointer")"
-                            Style="@(IsLastNode() ? "color: #787878;" : "")"/>
+                    <MatIcon
+                        @onclick="() => {if (!IsFirstNode()) CreateNodeAction(NodeActionEnum.ReorderUp);}"
+                        Icon="@MatIconNames.Expand_less"
+                        Class=@(IsFirstNode() ? "disable-pointer" : "pointer")/>
+                    <MatIcon
+                        @onclick="() => {if (!IsLastNode()) CreateNodeAction(NodeActionEnum.ReorderDown);}"
+                        Icon="@MatIconNames.Expand_more"
+                        Class=@(IsLastNode() ? "disable-pointer" : "pointer")/>
                 </div>
             }
             <MatIcon Icon="@SetIconFolder()"></MatIcon>
@@ -33,31 +31,6 @@
                 }
                 else
                 {
-                    @if (NodeDisplayState == NodeDisplayStateEnum.CustomSort)
-                    {
-                        <div class="root__reorder" @onclick:stopPropagation="true">
-                            @if (RootNode.CustomSortId == SiblingsAmount && RootNode.CustomSortId == 1)
-                            {
-                                <MatIcon Icon="@MatIconNames.Expand_less" Style="color: #787878;"/>
-                                <MatIcon Icon="@MatIconNames.Expand_more" Style="color: #787878;"/>
-                            }
-                            else if (RootNode.CustomSortId == SiblingsAmount)
-                            {
-                                <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.ReorderUp)" Icon="@MatIconNames.Expand_less" Class="pointer"/>
-                                <MatIcon Icon="@MatIconNames.Expand_more" Style="color: #787878;"/>
-                            }
-                            else if (RootNode.CustomSortId == 1)
-                            {
-                                <MatIcon Icon="@MatIconNames.Expand_less" Style="color: #787878;"/>
-                                <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.ReorderDown)" Icon="@MatIconNames.Expand_more" Class="pointer"/>
-                            }
-                            else
-                            {
-                                <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.ReorderUp)" Icon="@MatIconNames.Expand_less" Class="pointer"/>
-                                <MatIcon @onclick="() => CreateNodeAction(NodeActionEnum.ReorderDown)" Icon="@MatIconNames.Expand_more" Class="pointer"/>
-                            }
-                        </div>
-                    }
                     <div class="root__actions" @onclick:stopPropagation="true">
                         
                         <span tooltip="Dodaj folder">

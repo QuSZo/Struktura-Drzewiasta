@@ -128,3 +128,7 @@ i.material-icons{
     display: flex;
     position: relative;
 }
+
+.disable-pointer{
+    color: #787878
+}
